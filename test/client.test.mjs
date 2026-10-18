@@ -66,3 +66,41 @@ test('Host 已注入：浏览器半侧不重复自举，只缓存配置', () => 
   assert.equal(JSON.parse(localStorage.getItem('dsh-neural-startup:cfg')).mode, 'always')
   delete globalThis.__DSH_NEURAL_HOST__
 })
+
+test('设置面板：完整渲染，音色是下拉框，本机找不到的已存音色会标出来', async () => {
+  const env = installDom()
+  globalThis.__DSH_NEURAL_HOST__ = true; globalThis.__DSH_NEURAL__ = {}
+  globalThis.speechSynthesis = { getVoices: () => [{ name: 'Microsoft Sonia Online (Natural) - English (United Kingdom)', lang: 'en-GB' }, { name: 'Microsoft Zira', lang: 'en-US' }, { name: 'Microsoft Xiaoxiao', lang: 'zh-CN' }], addEventListener() {}, removeEventListener() {} }
+  const { defaults } = await import('../lib/config.js')
+  let entry
+  globalThis.__ModuleLoader__ = { load(v) { entry = v } }
+  globalThis.fetch = () => new Promise(() => {})
+  new Function(SRC)()
+  const el = (type, props, ...children) => ({ type, props: props || {}, children: children.flat(Infinity) })
+  let hook = 0
+  const React = {
+    createElement: el,
+    useState: (init) => { hook++; if (hook === 1) return [{ ...defaults, voiceName: '123' }, () => {}]; return [typeof init === 'function' ? init() : init, () => {}] },
+    useEffect() {}
+  }
+  const mod = entry.factory(() => React)
+  let render
+  mod.apply({ slots: { inject: (_n, fn) => fn(), register: (_m, fn) => { render = fn } } })
+  /* 展开组件树：函数组件直接调用 */
+  const expand = (node) => {
+    if (!node || typeof node !== 'object') return node
+    if (Array.isArray(node)) return node.map(expand)
+    if (typeof node.type === 'function') return expand(node.type({ ...node.props, children: node.children }))
+    return { ...node, children: (node.children || []).map(expand) }
+  }
+  const tree = expand(render())
+  const all = []; const walk = (n) => { if (n && typeof n === 'object') { if (Array.isArray(n)) n.forEach(walk); else { all.push(n); (n.children || []).forEach(walk) } } }; walk(tree)
+  const voiceSelect = all.find((n) => n.type === 'select' && n.props['aria-label'] === '音色')
+  assert.ok(voiceSelect, '音色应是下拉框')
+  const labels = voiceSelect.children.filter((c) => c && c.type === 'option').map((o) => o.children.join(''))
+  assert.ok(labels.some((t) => t.includes('本机未找到：123')))
+  assert.ok(labels.some((t) => t.startsWith('★ Microsoft Sonia')))
+  assert.ok(!labels.some((t) => t.includes('Xiaoxiao')), '只列英文音色')
+  assert.ok(all.some((n) => n.type === 'button' && n.children.includes('试听')))
+  delete globalThis.__DSH_NEURAL_HOST__; delete globalThis.speechSynthesis
+})

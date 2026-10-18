@@ -1,0 +1,30 @@
+# Local IDE settings
+.idea/
+.vscode/
+*.iml
+
+# Dependencies and Python caches
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Local credentials and environment overrides
+.env
+.env.*
+!.env.example
+.npmrc
+*.pem
+*.key
+
+# Generated archives, logs and inspection output
+*.tgz
+*.log
+coverage/
+tools/dots_check.png
+
+# Operating system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini

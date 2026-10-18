@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "神经核心开机动画",
+    "description": "为 DeepSeek Harness 添加神经核心开屏动画，支持合成音效、语音播报和自定义台词。"
+  }
+}

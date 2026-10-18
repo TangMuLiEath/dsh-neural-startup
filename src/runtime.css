@@ -1,0 +1,73 @@
+/* dsh-neural-startup —— 开机动画样式（全部挂在 #dsh-neural-root 下，不污染宿主页面） */
+html.dnb-lock, html.dnb-lock body { overflow: hidden !important; }
+
+#dsh-neural-root {
+  --dnb-c1: #38d6ff; --dnb-c2: #9b7bff; --dnb-c3: #ff4fd8;
+  /* 右上角让给系统窗口按钮的高度（运行时按实际窗口写入；纯浏览器里为 0） */
+  --dnb-wco: 0px;
+  position: fixed; inset: 0; z-index: 2147483000; background: #020309; color-scheme: dark;
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  -webkit-user-select: none; user-select: none;
+}
+#dsh-neural-root.dnb-gone { display: none; }
+#dsh-neural-root *, #dsh-neural-root *::before, #dsh-neural-root *::after { box-sizing: border-box; }
+#dsh-neural-root .dnb-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+#dsh-neural-root .dnb-hud { position: absolute; pointer-events: none; margin: 0;
+  font-family: "JetBrains Mono", "Cascadia Mono", Consolas, ui-monospace, monospace;
+  font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: rgba(165,226,255,.74); white-space: pre; }
+#dsh-neural-root .dnb-tl { top: 30px; left: 34px; line-height: 1.9; }
+#dsh-neural-root .dnb-k { color: rgba(165,226,255,.38); }
+#dsh-neural-root .dnb-tr { top: calc(64px + var(--dnb-wco)); right: 34px; text-align: right; line-height: 1.9; }
+#dsh-neural-root .dnb-log { bottom: 66px; left: 34px; line-height: 1.95; }
+#dsh-neural-root .dnb-ok { color: #7dffcf; }
+#dsh-neural-root .dnb-dim { color: rgba(165,226,255,.38); }
+#dsh-neural-root .dnb-cur { display: inline-block; width: .6em; height: 1em; vertical-align: -2px; background: var(--dnb-c1);
+  margin-left: 2px; box-shadow: 0 0 8px var(--dnb-c1); }
+#dsh-neural-root .dnb-bar { left: 34px; right: 34px; bottom: 40px; height: 1px; background: rgba(120,200,255,.13); }
+#dsh-neural-root .dnb-bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  background: linear-gradient(90deg, var(--dnb-c1), var(--dnb-c2), var(--dnb-c3)); box-shadow: 0 0 10px rgba(56,214,255,.8); }
+#dsh-neural-root .dnb-bar span { position: absolute; right: 0; top: -20px; }
+#dsh-neural-root .dnb-skip { right: 34px; bottom: 82px; }
+#dsh-neural-root .dnb-cn { position: absolute; width: 22px; height: 22px; border: 0 solid rgba(140,215,255,.55); pointer-events: none; }
+#dsh-neural-root .dnb-a { top: 14px; left: 14px; border-top-width: 1px; border-left-width: 1px; }
+#dsh-neural-root .dnb-b { top: calc(14px + var(--dnb-wco)); right: 14px; border-top-width: 1px; border-right-width: 1px; }
+#dsh-neural-root .dnb-c { bottom: 14px; left: 14px; border-bottom-width: 1px; border-left-width: 1px; }
+#dsh-neural-root .dnb-d { bottom: 14px; right: 14px; border-bottom-width: 1px; border-right-width: 1px; }
+
+/* 右上角声音开关 */
+#dsh-neural-root .dnb-snd { position: absolute; top: calc(24px + var(--dnb-wco)); right: 30px; z-index: 2; display: inline-flex; align-items: center; gap: 8px;
+  margin: 0; padding: 6px 11px; border: 1px solid rgba(140,215,255,.35); border-radius: 3px; background: rgba(4,10,20,.45);
+  color: rgba(190,236,255,.85); cursor: pointer; font: 11px/1 "JetBrains Mono", "Cascadia Mono", Consolas, monospace; letter-spacing: .16em;
+  opacity: .7; transition: opacity .2s, border-color .2s, color .2s; }
+#dsh-neural-root .dnb-snd[hidden] { display: none; }
+#dsh-neural-root .dnb-snd:hover, #dsh-neural-root .dnb-snd:focus-visible { opacity: 1; border-color: var(--dnb-c1); outline: none; }
+#dsh-neural-root .dnb-snd svg { width: 14px; height: 14px; }
+#dsh-neural-root .dnb-snd .dnb-x { display: none; }
+#dsh-neural-root .dnb-snd.dnb-off { color: rgba(190,236,255,.5); border-color: rgba(140,215,255,.2); }
+#dsh-neural-root .dnb-snd.dnb-off .dnb-w { display: none; }
+#dsh-neural-root .dnb-snd.dnb-off .dnb-x { display: inline; }
+
+/* 终幕标题 */
+#dsh-neural-root .dnb-title { position: absolute; left: 6.5vw; top: 50%; transform: translateY(-38%); pointer-events: none; opacity: 0; }
+#dsh-neural-root .dnb-row { display: flex; align-items: center; gap: 18px; }
+#dsh-neural-root .dnb-whale { width: clamp(46px, 5vw, 74px); height: auto; overflow: visible; filter: drop-shadow(0 0 10px rgba(56,214,255,.75)); }
+#dsh-neural-root .dnb-whale path { fill: #bfefff; fill-opacity: 0; stroke: #7fe6ff; stroke-width: .55; stroke-linejoin: round; }
+#dsh-neural-root .dnb-t1 { font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace; font-weight: 700; color: #eafaff;
+  font-size: clamp(30px, 4.4vw, 68px); letter-spacing: .14em; line-height: 1.15; white-space: pre;
+  text-shadow: -2px 0 rgba(255,79,216,.55), 2px 0 rgba(56,214,255,.6), 0 0 22px rgba(56,214,255,.45); }
+#dsh-neural-root .dnb-t2 { margin-top: 6px; font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace; color: transparent; white-space: pre;
+  -webkit-text-stroke: 1px rgba(150,225,255,.85); font-size: clamp(18px, 2.3vw, 36px); letter-spacing: .62em; font-weight: 700; line-height: 1.2; }
+#dsh-neural-root .dnb-t3 { margin-top: 18px; color: #cfe9ff; font-size: clamp(13px, 1.15vw, 17px); letter-spacing: .42em; }
+#dsh-neural-root .dnb-t4 { margin-top: 16px; display: inline-flex; gap: 10px; align-items: center; padding: 6px 12px 6px 10px;
+  border: 1px solid rgba(155,123,255,.55); background: rgba(155,123,255,.08);
+  font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace; font-size: 11px; letter-spacing: .2em; color: #d9ccff; }
+#dsh-neural-root .dnb-t4 i { width: 6px; height: 6px; background: #c7a8ff; box-shadow: 0 0 10px #b48cff; transform: rotate(45deg); }
+
+@media (max-width: 760px) {
+  #dsh-neural-root .dnb-tr, #dsh-neural-root .dnb-log { display: none; }
+  #dsh-neural-root .dnb-title { left: 7vw; top: auto; bottom: 12vh; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #dsh-neural-root .dnb-snd { transition: none; }
+}

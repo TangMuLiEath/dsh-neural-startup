@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSH · Neural Boot · 预览</title>
+<style>
+  :root { color-scheme: dark; }
+  html, body { margin:0; height:100%; overflow:hidden; background:#05060d;
+    font-family:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif; }
+  /* 预览用的假宿主页（真实插件里这里是 DSH 主界面） */
+  #host { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:12px; color:#8b93a7; background:radial-gradient(120% 90% at 50% 0%,#171b28,#0c0e15); font-size:13px; }
+  #host b { color:#dfe5f1; font-size:20px; font-weight:600; letter-spacing:.06em; }
+  #host button { margin-top:6px; padding:7px 18px; border-radius:8px; border:1px solid #2c3346; background:#141927;
+    color:#cfe6ff; font:inherit; cursor:pointer; }
+  #host button:hover, #host button:focus-visible { border-color:#38d6ff; outline:none; }
+  #host .vp { display:flex; gap:8px; align-items:center; margin-top:14px; }
+  #host select { max-width:340px; padding:6px 8px; border-radius:8px; border:1px solid #2c3346; background:#141927; color:#cfe6ff; font:inherit; }
+  #host .vh { font-size:12px; color:#6f7890; max-width:520px; text-align:center; line-height:1.6; }
+/*__CSS__*/
+</style>
+</head>
+<body>
+<div id="host">
+  <b>DeepSeek Harness</b>
+  <div>（预览用的占位主界面 · 开机动画结束后露出）</div>
+  <button id="replay" type="button">重播开机动画（R）</button>
+  <div class="vp">
+    <label for="vsel">播报音色（预览用）</label>
+    <select id="vsel"></select>
+    <button id="vtest" type="button">试听</button>
+  </div>
+  <div class="vh" id="vhint"></div>
+</div>
+<div id="dsh-neural-root" class="dnb-boot"></div>
+<script>window.__DSH_NEURAL__ = { preview: true, mode: 'always' }</script>
+<script>
+/*__SCRIPT__*/
+</script>
+<script>
+/* 预览页专用：重播按钮 + 列出本机可用的英文音色，选中后重播即生效（插件版在设置页里选） */
+(function () {
+  var api = window.__DSH_NEURAL_API__, sel = document.getElementById('vsel'), hint = document.getElementById('vhint')
+  document.getElementById('replay').addEventListener('click', function () { if (api) api.replay() })
+  function fill() {
+    var list = api ? api.englishVoices() : []
+    var cur = window.__DSH_VOICE__ || ''
+    sel.innerHTML = '<option value="">自动（优先英式/美式神经网络女声）</option>' + list.map(function (v) {
+      var n = v.name.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      return '<option value="' + n.replace(/"/g, '&quot;') + '"' + (v.name === cur ? ' selected' : '') + '>' + n + ' · ' + v.lang + '</option>'
+    }).join('')
+    hint.textContent = list.length
+      ? '共 ' + list.length + ' 个英文音色。带 Online (Natural) 的是神经网络音色，最自然；想要更低沉的「主脑」感可以试 Sonia、Libby、Ava，或男声 Guy、Davis。'
+      : '这台机器暂时读不到英文音色（浏览器可能还在加载，稍等片刻会自动刷新）。'
+  }
+  sel.addEventListener('change', function () { window.__DSH_VOICE__ = sel.value || '' })
+  document.getElementById('vtest').addEventListener('click', function () { if (api) api.say() })
+  if (window.speechSynthesis) { try { speechSynthesis.addEventListener('voiceschanged', fill) } catch (e) {} }
+  fill(); setTimeout(fill, 600)
+})()
+</script>
+</body>
+</html>
